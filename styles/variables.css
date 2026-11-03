@@ -1,0 +1,90 @@
+/* Design tokens - cheerful but professional. Light by default, dark via system preference or toggle */
+:root {
+  --bg: #fbfaff;
+  --bg-alt: #f4f1ff;
+  --surface: #ffffff;
+  --text: #1c1838;
+  --text-muted: #5f5a7d;
+  --border: #e7e2f7;
+
+  --primary: #6c4cff;          /* violet */
+  --primary-strong: #5633f0;
+  --primary-soft: rgba(108, 76, 255, 0.1);
+  --coral: #ff6b5e;
+  --sun: #ffb020;
+  --mint: #12b886;
+  --sky: #1c9bf0;
+  --pink: #ec4899;
+  --success: #12a150;
+  --danger: #e03131;
+
+  --blob-1: rgba(108, 76, 255, 0.28);
+  --blob-2: rgba(255, 107, 94, 0.22);
+  --blob-3: rgba(255, 176, 32, 0.22);
+
+  --shadow: 0 10px 30px -14px rgba(48, 30, 120, 0.22);
+  --shadow-lg: 0 26px 60px -24px rgba(48, 30, 120, 0.35);
+
+  --font: "Rubik", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+
+  --radius: 20px;
+  --radius-sm: 12px;
+  --container: 1120px;
+  --header-h: 68px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #100d1f;
+    --bg-alt: #16122b;
+    --surface: #1c1836;
+    --text: #f1effe;
+    --text-muted: #a9a4c6;
+    --border: #2e2852;
+    --primary: #9f8cff;
+    --primary-strong: #bcafff;
+    --primary-soft: rgba(159, 140, 255, 0.15);
+    --coral: #ff8a80;
+    --sun: #ffc94d;
+    --mint: #38d9a9;
+    --sky: #4dabf7;
+    --pink: #f472b6;
+    --success: #40c057;
+    --danger: #ff6b6b;
+    --blob-1: rgba(159, 140, 255, 0.22);
+    --blob-2: rgba(255, 138, 128, 0.14);
+    --blob-3: rgba(255, 201, 77, 0.12);
+    --shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.6);
+    --shadow-lg: 0 26px 60px -20px rgba(0, 0, 0, 0.7);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #100d1f;
+  --bg-alt: #16122b;
+  --surface: #1c1836;
+  --text: #f1effe;
+  --text-muted: #a9a4c6;
+  --border: #2e2852;
+  --primary: #9f8cff;
+  --primary-strong: #bcafff;
+  --primary-soft: rgba(159, 140, 255, 0.15);
+  --coral: #ff8a80;
+  --sun: #ffc94d;
+  --mint: #38d9a9;
+  --sky: #4dabf7;
+  --pink: #f472b6;
+  --success: #40c057;
+  --danger: #ff6b6b;
+  --blob-1: rgba(159, 140, 255, 0.22);
+  --blob-2: rgba(255, 138, 128, 0.14);
+  --blob-3: rgba(255, 201, 77, 0.12);
+  --shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 26px 60px -20px rgba(0, 0, 0, 0.7);
+  color-scheme: dark;
+}

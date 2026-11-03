@@ -1,0 +1,9 @@
+{
+  "name": "roy-landing-page",
+  "private": true,
+  "description": "Personal job-search landing page - TypeScript build only (the server is ASP.NET Core)",
+  "scripts": {
+    "build:ts": "npx --yes -p typescript@5.6.3 tsc -p scripts",
+    "watch:ts": "npx --yes -p typescript@5.6.3 tsc -p scripts --watch"
+  }
+}

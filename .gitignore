@@ -1,0 +1,17 @@
+# .NET build output
+server/bin/
+server/obj/
+*.user
+.vs/
+
+# Node (TypeScript compiler runs through npx, nothing is installed locally)
+node_modules/
+
+# Secrets - Supabase keys live in dotnet user-secrets, never in the repo
+.env
+.env.*
+appsettings.*.local.json
+
+# OS / Drive
+.DS_Store
+desktop.ini

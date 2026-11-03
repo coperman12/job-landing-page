@@ -1,0 +1,52 @@
+/* Reset and typography */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + 12px);
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Hebrew visitors: hide until the dictionary is applied (fallback timer in index.html) */
+html.lang-loading body { visibility: hidden; }
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+h1, h2, h3 { line-height: 1.15; margin: 0 0 0.5em; font-weight: 700; letter-spacing: -0.015em; }
+h1 { font-size: clamp(2.2rem, 4.5vw, 3.25rem); font-weight: 800; }
+h2 { font-size: clamp(1.8rem, 3.6vw, 2.6rem); }
+h3 { font-size: 1.2rem; font-weight: 600; }
+p { margin: 0 0 1em; }
+
+a { color: var(--primary); text-decoration: none; }
+a:hover { color: var(--primary-strong); }
+
+img { max-width: 100%; height: auto; display: block; }
+svg { width: 1em; height: 1em; }
+
+button, input, textarea { font: inherit; color: inherit; }
+
+:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; border-radius: 6px; }
+
+.mono { font-family: var(--font-mono); direction: ltr; unicode-bidi: isolate; }
+.muted { color: var(--text-muted); }
+
+.skip-link {
+  position: absolute; inset-inline-start: 1rem; top: -100px;
+  background: var(--primary); color: #fff; padding: 0.5rem 1rem; border-radius: var(--radius-sm); z-index: 100;
+}
+.skip-link:focus { top: 1rem; color: #fff; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
