@@ -22,6 +22,8 @@ public static partial class SecurityHeaders
             h["Referrer-Policy"] = "strict-origin-when-cross-origin";
             h["X-Frame-Options"] = "DENY";
             h["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()";
+            // Browsers apply HSTS only over HTTPS, so this is harmless on http://localhost
+            h["Strict-Transport-Security"] = "max-age=31536000";
             await next();
         });
     }

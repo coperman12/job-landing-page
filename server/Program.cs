@@ -47,7 +47,8 @@ foreach (var folder in new[] { "styles", "images", "scripts/dist" })
 
 app.UseRateLimiter();
 
-app.MapGet("/", () => Results.File(indexPath, "text/html; charset=utf-8"));
+// GET and HEAD - link checkers and crawlers often send HEAD first
+app.MapMethods("/", new[] { "GET", "HEAD" }, () => Results.File(indexPath, "text/html; charset=utf-8"));
 app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 app.MapContactEndpoints();
 
