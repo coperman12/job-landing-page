@@ -8,7 +8,7 @@ A personal landing page for my job search (Team Lead / Senior .NET Developer), w
 
 <p>
   <img src="docs/screenshot-desktop.png" alt="Desktop, dark mode" width="72%">
-  <img src="docs/screenshot-mobile-he.png" alt="Mobile, Hebrew, light mode" width="24%">
+  <img src="docs/screenshot-mobile.png" alt="Mobile, light mode" width="24%">
 </p>
 
 ## Features
