@@ -1,0 +1,57 @@
+# Every push to main: build checks, then deploy to the Hostinger VPS over SSH.
+# Pull requests run the build checks only.
+name: Build and deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: TypeScript - compile and make sure scripts/dist is up to date
+        run: |
+          npx --yes -p typescript@5.6.3 tsc -p scripts
+          git diff --exit-code scripts/dist || { echo "::error::scripts/dist is stale - run npm run build:ts and commit"; exit 1; }
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 9.0.x
+
+      - name: .NET build
+        run: dotnet build server/LandingPage.Server.csproj -c Release
+
+  deploy:
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      HOST: srv1914674.hstgr.cloud
+      # Public host key of the server (not a secret) - pins the server so the key is never sent elsewhere
+      KNOWN_HOST: srv1914674.hstgr.cloud ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMtDpP6+S8mKAov8410R5K+LDvAPBnAzIJt0Oojnrw9z
+      SITE: https://roylp.copermans.tech
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Ship the site to the server
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$KNOWN_HOST" > ~/.ssh/known_hosts
+          # The key's forced command on the server runs receive.sh, which reads this tarball from stdin
+          git ls-files -z | tar --null -T - -czf - \
+            | ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes root@"$HOST"
+
+      - name: Check the live site
+        run: curl -fsS --retry 6 --retry-delay 5 --retry-all-errors "$SITE/health"
