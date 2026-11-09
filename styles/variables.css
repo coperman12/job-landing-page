@@ -4,7 +4,7 @@
   --bg-alt: #f4f1ff;
   --surface: #ffffff;
   --text: #1c1838;
-  --text-muted: #5f5a7d;
+  --text-muted: #565172;
   --border: #e7e2f7;
 
   --primary: #6c4cff;          /* violet */
@@ -15,8 +15,14 @@
   --mint: #12b886;
   --sky: #1c9bf0;
   --pink: #ec4899;
-  --success: #12a150;
-  --danger: #e03131;
+  --success: #0a7239;
+  --danger: #c92a2a;
+  /* Accents dark enough for small text. The bright ones above stay for bars, dots and icons */
+  --coral-text: #bd2e1e;
+  --sun-text: #8a5a00;
+  --mint-text: #087456;
+  --sky-text: #0a6ab0;
+  --field-border: #8c86a8;
 
   --blob-1: rgba(108, 76, 255, 0.28);
   --blob-2: rgba(255, 107, 94, 0.22);
@@ -55,6 +61,11 @@
     --pink: #f472b6;
     --success: #40c057;
     --danger: #ff6b6b;
+    --coral-text: var(--coral);
+    --sun-text: var(--sun);
+    --mint-text: var(--mint);
+    --sky-text: var(--sky);
+    --field-border: #7a739f;
     --blob-1: rgba(159, 140, 255, 0.22);
     --blob-2: rgba(255, 138, 128, 0.14);
     --blob-3: rgba(255, 201, 77, 0.12);
@@ -81,6 +92,11 @@
   --pink: #f472b6;
   --success: #40c057;
   --danger: #ff6b6b;
+  --coral-text: var(--coral);
+  --sun-text: var(--sun);
+  --mint-text: var(--mint);
+  --sky-text: var(--sky);
+  --field-border: #7a739f;
   --blob-1: rgba(159, 140, 255, 0.22);
   --blob-2: rgba(255, 138, 128, 0.14);
   --blob-3: rgba(255, 201, 77, 0.12);

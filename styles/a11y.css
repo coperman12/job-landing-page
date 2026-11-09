@@ -106,12 +106,14 @@ kbd { padding: 0.05rem 0.4rem; border: 1px solid var(--border); border-bottom-wi
   --bg: #000; --bg-alt: #000; --surface: #000; --text: #fff; --text-muted: #fff; --border: #fff;
   --primary: #ffe600; --primary-strong: #fff; --primary-soft: rgba(255, 230, 0, 0.2);
   --coral: #ffb3a8; --sun: #ffe600; --mint: #66ffc2; --sky: #7fd0ff; --pink: #ffa6de; --success: #7dff9b; --danger: #ff9c9c;
+  --coral-text: var(--coral); --sun-text: var(--sun); --mint-text: var(--mint); --sky-text: var(--sky); --field-border: var(--border);
   --shadow: none; --shadow-lg: none; color-scheme: dark;
 }
 :root[data-a11y-colors="hc-light"] {
   --bg: #fff; --bg-alt: #fff; --surface: #fff; --text: #000; --text-muted: #000; --border: #000;
   --primary: #00008b; --primary-strong: #000; --primary-soft: rgba(0, 0, 139, 0.12);
   --coral: #9c0000; --sun: #6b4700; --mint: #005c3a; --sky: #00468c; --pink: #8a005c; --success: #005c1e; --danger: #b00000;
+  --coral-text: var(--coral); --sun-text: var(--sun); --mint-text: var(--mint); --sky-text: var(--sky); --field-border: var(--border);
   --shadow: none; --shadow-lg: none; color-scheme: light;
 }
 :root:is([data-a11y-colors="hc-dark"], [data-a11y-colors="hc-light"]) .blobs { display: none; }

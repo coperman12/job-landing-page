@@ -42,7 +42,7 @@ button, input, textarea { font: inherit; color: inherit; }
 
 .skip-link {
   position: absolute; inset-inline-start: 1rem; top: -100px;
-  background: var(--primary); color: #fff; padding: 0.5rem 1rem; border-radius: var(--radius-sm); z-index: 100;
+  background: #5633f0; color: #fff; padding: 0.5rem 1rem; border-radius: var(--radius-sm); z-index: 100;
 }
 .skip-link:focus { top: 1rem; color: #fff; }
 
