@@ -2,7 +2,8 @@
 // so English job titles on the Hebrew page sound right. Which voices exist depends on the device
 import { getLang, t } from './i18n.js';
 const STORAGE_KEY = 'a11y-reader';
-const RATES = { slow: 0.8, normal: 1, fast: 1.3 };
+// Measured on macOS Chrome: below 1 the engine barely reacts (0.8 is 0-10% slower, 0.5 is 20-30% slower)
+const RATES = { slow: 0.5, normal: 1, fast: 1.3 };
 const BLOCKS = 'h1, h2, h3, p, label, .stat, .chips, .timeline-years, .edu-tag';
 const NOT_READ = '.hp, .field-error, .form-status';
 const CONTROLS = 'a, button, input, textarea, summary';
@@ -12,11 +13,13 @@ let chunks = [];
 let position = 0;
 let run = 0; // Bumped by every speak and stop, so callbacks of a cancelled sentence are ignored
 let spoken = null;
+let following = false; // Continuous reading scrolls with the text; a single clicked paragraph stays put
 let readOnClick = false;
 let rate = 'normal';
 let bar;
 let statusLabel;
 let pauseButton;
+let pauseLabel;
 let notice;
 let renderControls = () => { };
 function clean(text) {
@@ -82,14 +85,19 @@ function mark(el) {
     if (!el)
         return;
     el.classList.add('a11y-speaking');
+    if (!following)
+        return;
+    // Keep the text being read in the middle of the screen. Blocks on the same row don't move the page
     const box = el.getBoundingClientRect();
-    if (box.top < 90 || box.bottom > window.innerHeight - 90)
+    const middle = (box.top + box.bottom) / 2;
+    if (middle < window.innerHeight * 0.3 || middle > window.innerHeight * 0.6)
         el.scrollIntoView({ block: 'center' });
 }
 function renderBar() {
     bar.hidden = state === 'idle';
+    bar.dataset.state = state;
     statusLabel.textContent = t(state === 'paused' ? 'a11y.read.paused' : 'a11y.read.reading');
-    pauseButton.textContent = t(state === 'paused' ? 'a11y.read.resume' : 'a11y.read.pause');
+    pauseLabel.textContent = t(state === 'paused' ? 'a11y.read.resume' : 'a11y.read.pause');
 }
 function speakCurrent() {
     const chunk = chunks[position];
@@ -120,13 +128,14 @@ function speakCurrent() {
     mark(chunk.el);
     synth.speak(utterance);
 }
-function play(items, from = 0) {
+function play(items, from = 0, follow = false) {
     if (items.length === 0)
         return;
     run++;
     synth?.cancel();
     chunks = items;
     position = from;
+    following = follow;
     state = 'reading';
     renderBar();
     speakCurrent();
@@ -137,7 +146,7 @@ function startPage() {
     const items = pageChunks();
     const headerBottom = document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 0;
     const firstInView = items.findIndex((chunk) => chunk.el && chunk.el.getBoundingClientRect().bottom > headerBottom);
-    play(items, Math.max(firstInView, 0));
+    play(items, Math.max(firstInView, 0), true);
     return true;
 }
 // Pausing cancels and remembers the sentence: speechSynthesis.pause() is unreliable on Android
@@ -233,6 +242,7 @@ export function initReader(panel) {
     bar = document.getElementById('reader-bar');
     statusLabel = document.getElementById('reader-status');
     pauseButton = document.getElementById('reader-pause');
+    pauseLabel = document.getElementById('reader-pause-label');
     notice = document.getElementById('a11y-read-notice');
     const clickBox = document.getElementById('a11y-read-click');
     const rates = Array.from(panel.querySelectorAll('input[name="a11y-rate"]'));
@@ -260,6 +270,11 @@ export function initReader(panel) {
     rates.forEach((input) => input.addEventListener('change', () => {
         rate = input.value;
         savePrefs();
+        // Takes effect at once: the sentence being read restarts at the new speed
+        if (state === 'reading') {
+            synth?.cancel();
+            speakCurrent();
+        }
     }));
     pauseButton.addEventListener('click', togglePause);
     document.getElementById('reader-stop')?.addEventListener('click', stopReading);

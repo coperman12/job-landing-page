@@ -3,7 +3,8 @@
 import { getLang, t, type Key, type Lang } from './i18n.js';
 
 const STORAGE_KEY = 'a11y-reader';
-const RATES = { slow: 0.8, normal: 1, fast: 1.3 };
+// Measured on macOS Chrome: below 1 the engine barely reacts (0.8 is 0-10% slower, 0.5 is 20-30% slower)
+const RATES = { slow: 0.5, normal: 1, fast: 1.3 };
 type Rate = keyof typeof RATES;
 
 const BLOCKS = 'h1, h2, h3, p, label, .stat, .chips, .timeline-years, .edu-tag';
@@ -22,12 +23,14 @@ let chunks: Chunk[] = [];
 let position = 0;
 let run = 0; // Bumped by every speak and stop, so callbacks of a cancelled sentence are ignored
 let spoken: HTMLElement | null = null;
+let following = false; // Continuous reading scrolls with the text; a single clicked paragraph stays put
 let readOnClick = false;
 let rate: Rate = 'normal';
 
 let bar: HTMLElement;
 let statusLabel: HTMLElement;
 let pauseButton: HTMLElement;
+let pauseLabel: HTMLElement;
 let notice: HTMLElement;
 let renderControls: () => void = () => {};
 
@@ -102,14 +105,19 @@ function mark(el: HTMLElement | null): void {
   if (!el) return;
 
   el.classList.add('a11y-speaking');
+  if (!following) return;
+
+  // Keep the text being read in the middle of the screen. Blocks on the same row don't move the page
   const box = el.getBoundingClientRect();
-  if (box.top < 90 || box.bottom > window.innerHeight - 90) el.scrollIntoView({ block: 'center' });
+  const middle = (box.top + box.bottom) / 2;
+  if (middle < window.innerHeight * 0.3 || middle > window.innerHeight * 0.6) el.scrollIntoView({ block: 'center' });
 }
 
 function renderBar(): void {
   bar.hidden = state === 'idle';
+  bar.dataset.state = state;
   statusLabel.textContent = t(state === 'paused' ? 'a11y.read.paused' : 'a11y.read.reading');
-  pauseButton.textContent = t(state === 'paused' ? 'a11y.read.resume' : 'a11y.read.pause');
+  pauseLabel.textContent = t(state === 'paused' ? 'a11y.read.resume' : 'a11y.read.pause');
 }
 
 function speakCurrent(): void {
@@ -142,12 +150,13 @@ function speakCurrent(): void {
   synth.speak(utterance);
 }
 
-function play(items: Chunk[], from = 0): void {
+function play(items: Chunk[], from = 0, follow = false): void {
   if (items.length === 0) return;
   run++;
   synth?.cancel();
   chunks = items;
   position = from;
+  following = follow;
   state = 'reading';
   renderBar();
   speakCurrent();
@@ -159,7 +168,7 @@ function startPage(): boolean {
   const items = pageChunks();
   const headerBottom = document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 0;
   const firstInView = items.findIndex((chunk) => chunk.el && chunk.el.getBoundingClientRect().bottom > headerBottom);
-  play(items, Math.max(firstInView, 0));
+  play(items, Math.max(firstInView, 0), true);
   return true;
 }
 
@@ -252,6 +261,7 @@ export function initReader(panel: HTMLDialogElement): void {
   bar = document.getElementById('reader-bar')!;
   statusLabel = document.getElementById('reader-status')!;
   pauseButton = document.getElementById('reader-pause')!;
+  pauseLabel = document.getElementById('reader-pause-label')!;
   notice = document.getElementById('a11y-read-notice')!;
 
   const clickBox = document.getElementById('a11y-read-click') as HTMLInputElement;
@@ -281,6 +291,11 @@ export function initReader(panel: HTMLDialogElement): void {
     input.addEventListener('change', () => {
       rate = input.value as Rate;
       savePrefs();
+      // Takes effect at once: the sentence being read restarts at the new speed
+      if (state === 'reading') {
+        synth?.cancel();
+        speakCurrent();
+      }
     })
   );
 

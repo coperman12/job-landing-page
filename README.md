@@ -19,7 +19,7 @@ A personal landing page for my job search (Team Lead / Senior .NET Developer), w
 - **Email notification** - a Supabase database webhook triggers an n8n workflow that emails me, with Reply-To set to the visitor
 - **Responsive and accessible** - desktop to mobile, keyboard focus styles, ARIA labels, reduced-motion support
 - **Accessibility menu** - high-contrast and monochrome modes, text size up to 200%, wider spacing, readable font, link and heading highlights, reading guide, large cursor, stop animations, keyboard shortcuts and an accessibility statement; choices are remembered
-- **Read aloud** - the browser's speech engine reads the page or a clicked paragraph, choosing a Hebrew or English voice per sentence
+- **Read aloud** - the browser's speech engine reads the page or a clicked paragraph, choosing a Hebrew or English voice per sentence; continuous reading scrolls with the text and has a floating pause and stop bar
 - **Floating actions** - a shortcut to the contact form while it is off screen, and back to top once the page has scrolled
 
 ## Tech stack
