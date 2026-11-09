@@ -8,6 +8,13 @@ const RATES = { slow: 0.5, normal: 1, fast: 1.3 };
 type Rate = keyof typeof RATES;
 const RATE_STEPS = Object.keys(RATES) as Rate[]; // Slowest to fastest, for the bar's - and + buttons
 
+// The browser doesn't say which voices are male, so they are recognized by name, best first
+const MALE_VOICES: Record<Lang, string[]> = {
+  he: ['Avri', 'Asaf'],
+  en: ['Guy', 'Andrew', 'Brian', 'Christopher', 'Eric', 'Aaron', 'Daniel', 'Alex', 'David', 'Mark', 'Ryan', 'George', 'Google UK English Male', 'Reed', 'Eddy', 'Rocko', 'Fred'],
+};
+const DEEP_PITCH = 0.75; // For a device with no male voice in this language, like Hebrew on Apple (only Carmit)
+
 const BLOCKS = 'h1, h2, h3, p, label, .stat, .chips, .timeline-years, .edu-tag';
 const NOT_READ = '.hp, .field-error, .form-status';
 const CONTROLS = 'a, button, input, textarea, summary';
@@ -24,6 +31,7 @@ let chunks: Chunk[] = [];
 let position = 0;
 let run = 0; // Bumped by every speak and stop, so callbacks of a cancelled sentence are ignored
 let spoken: HTMLElement | null = null;
+let inFlight: SpeechSynthesisUtterance | null = null; // Chrome can lose the end event of a sentence nothing refers to
 let following = false; // Continuous reading scrolls with the text; a single clicked paragraph stays put
 let readOnClick = false;
 let rate: Rate = 'normal';
@@ -73,11 +81,16 @@ function pageChunks(): Chunk[] {
     .flatMap((el) => toChunks(el, blockText(el)));
 }
 
+function isNamed(voice: SpeechSynthesisVoice, name: string): boolean {
+  return new RegExp(`\\b${name}\\b`, 'i').test(voice.name);
+}
+
 function findVoice(lang: Lang): SpeechSynthesisVoice | undefined {
   // "iw" is the old code for Hebrew, still reported on Android
   const pattern = lang === 'he' ? /^(he|iw)([-_]|$)/i : /^en([-_]|$)/i;
   const voices = (synth?.getVoices() ?? []).filter((v) => pattern.test(v.lang));
   return (
+    MALE_VOICES[lang].map((name) => voices.find((v) => isNamed(v, name))).find(Boolean) ??
     voices.find((v) => v.default) ??
     voices.find((v) => /samantha|google|microsoft|natural|premium|enhanced/i.test(v.name)) ??
     voices[0]
@@ -141,6 +154,7 @@ function speakCurrent(): void {
   const voice = findVoice(lang);
   if (voice) utterance.voice = voice;
   utterance.rate = RATES[rate];
+  if (!voice || !MALE_VOICES[lang].some((name) => isNamed(voice, name))) utterance.pitch = DEEP_PITCH;
 
   utterance.onend = () => {
     if (id !== run) return;
@@ -154,7 +168,8 @@ function speakCurrent(): void {
   };
 
   mark(chunk.el);
-  synth.speak(utterance);
+  inFlight = utterance;
+  synth.speak(inFlight);
 }
 
 function play(items: Chunk[], from = 0, follow = false): void {

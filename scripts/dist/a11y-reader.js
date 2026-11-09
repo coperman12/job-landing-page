@@ -5,6 +5,12 @@ const STORAGE_KEY = 'a11y-reader';
 // Measured on macOS Chrome: below 1 the engine barely reacts (0.8 is 0-10% slower, 0.5 is 20-30% slower)
 const RATES = { slow: 0.5, normal: 1, fast: 1.3 };
 const RATE_STEPS = Object.keys(RATES); // Slowest to fastest, for the bar's - and + buttons
+// The browser doesn't say which voices are male, so they are recognized by name, best first
+const MALE_VOICES = {
+    he: ['Avri', 'Asaf'],
+    en: ['Guy', 'Andrew', 'Brian', 'Christopher', 'Eric', 'Aaron', 'Daniel', 'Alex', 'David', 'Mark', 'Ryan', 'George', 'Google UK English Male', 'Reed', 'Eddy', 'Rocko', 'Fred'],
+};
+const DEEP_PITCH = 0.75; // For a device with no male voice in this language, like Hebrew on Apple (only Carmit)
 const BLOCKS = 'h1, h2, h3, p, label, .stat, .chips, .timeline-years, .edu-tag';
 const NOT_READ = '.hp, .field-error, .form-status';
 const CONTROLS = 'a, button, input, textarea, summary';
@@ -14,6 +20,7 @@ let chunks = [];
 let position = 0;
 let run = 0; // Bumped by every speak and stop, so callbacks of a cancelled sentence are ignored
 let spoken = null;
+let inFlight = null; // Chrome can lose the end event of a sentence nothing refers to
 let following = false; // Continuous reading scrolls with the text; a single clicked paragraph stays put
 let readOnClick = false;
 let rate = 'normal';
@@ -57,11 +64,15 @@ function pageChunks() {
         .filter((el) => !el.closest(NOT_READ))
         .flatMap((el) => toChunks(el, blockText(el)));
 }
+function isNamed(voice, name) {
+    return new RegExp(`\\b${name}\\b`, 'i').test(voice.name);
+}
 function findVoice(lang) {
     // "iw" is the old code for Hebrew, still reported on Android
     const pattern = lang === 'he' ? /^(he|iw)([-_]|$)/i : /^en([-_]|$)/i;
     const voices = (synth?.getVoices() ?? []).filter((v) => pattern.test(v.lang));
-    return (voices.find((v) => v.default) ??
+    return (MALE_VOICES[lang].map((name) => voices.find((v) => isNamed(v, name))).find(Boolean) ??
+        voices.find((v) => v.default) ??
         voices.find((v) => /samantha|google|microsoft|natural|premium|enhanced/i.test(v.name)) ??
         voices[0]);
 }
@@ -120,6 +131,8 @@ function speakCurrent() {
     if (voice)
         utterance.voice = voice;
     utterance.rate = RATES[rate];
+    if (!voice || !MALE_VOICES[lang].some((name) => isNamed(voice, name)))
+        utterance.pitch = DEEP_PITCH;
     utterance.onend = () => {
         if (id !== run)
             return;
@@ -133,7 +146,8 @@ function speakCurrent() {
         setNotice('a11y.read.failed');
     };
     mark(chunk.el);
-    synth.speak(utterance);
+    inFlight = utterance;
+    synth.speak(inFlight);
 }
 function play(items, from = 0, follow = false) {
     if (items.length === 0)
