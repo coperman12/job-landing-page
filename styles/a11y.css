@@ -77,8 +77,6 @@ kbd { padding: 0.05rem 0.4rem; border: 1px solid var(--border); border-bottom-wi
 .reader-speed { display: flex; align-items: center; justify-content: center; gap: 0.35rem; }
 .reader-speed .icon-btn { color: var(--primary); }
 .reader-speed .icon-btn svg { stroke-width: 3; }
-/* Stop and X wrap together, so the X never ends up alone on a row */
-.reader-end { display: flex; align-items: center; gap: 0.5rem; }
 /* A fixed width, so the buttons don't jump when the speed name changes */
 .reader-speed-value { display: grid; min-width: 4em; text-align: center; line-height: 1.2; }
 .reader-speed-value small { font-size: 0.72rem; color: var(--text-muted); }
