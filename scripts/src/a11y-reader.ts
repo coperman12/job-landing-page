@@ -6,6 +6,7 @@ const STORAGE_KEY = 'a11y-reader';
 // Measured on macOS Chrome: below 1 the engine barely reacts (0.8 is 0-10% slower, 0.5 is 20-30% slower)
 const RATES = { slow: 0.5, normal: 1, fast: 1.3 };
 type Rate = keyof typeof RATES;
+const RATE_STEPS = Object.keys(RATES) as Rate[]; // Slowest to fastest, for the bar's - and + buttons
 
 const BLOCKS = 'h1, h2, h3, p, label, .stat, .chips, .timeline-years, .edu-tag';
 const NOT_READ = '.hp, .field-error, .form-status';
@@ -31,6 +32,9 @@ let bar: HTMLElement;
 let statusLabel: HTMLElement;
 let pauseButton: HTMLElement;
 let pauseLabel: HTMLElement;
+let speedValue: HTMLElement;
+let slowerButton: HTMLElement;
+let fasterButton: HTMLElement;
 let notice: HTMLElement;
 let renderControls: () => void = () => {};
 
@@ -118,6 +122,9 @@ function renderBar(): void {
   bar.dataset.state = state;
   statusLabel.textContent = t(state === 'paused' ? 'a11y.read.paused' : 'a11y.read.reading');
   pauseLabel.textContent = t(state === 'paused' ? 'a11y.read.resume' : 'a11y.read.pause');
+  speedValue.textContent = t(`a11y.read.${rate}`);
+  slowerButton.setAttribute('aria-disabled', String(rate === RATE_STEPS[0]));
+  fasterButton.setAttribute('aria-disabled', String(rate === RATE_STEPS[RATE_STEPS.length - 1]));
 }
 
 function speakCurrent(): void {
@@ -232,6 +239,23 @@ function loadPrefs(): void {
   }
 }
 
+function setRate(next: Rate): void {
+  rate = next;
+  savePrefs();
+  renderControls();
+  renderBar();
+  // Takes effect at once: the sentence being read restarts at the new speed
+  if (state === 'reading') {
+    synth?.cancel();
+    speakCurrent();
+  }
+}
+
+function stepRate(by: 1 | -1): void {
+  const next = RATE_STEPS[RATE_STEPS.indexOf(rate) + by];
+  if (next) setRate(next);
+}
+
 export function resetReader(): void {
   stopReading();
   readOnClick = false;
@@ -270,6 +294,9 @@ export function initReader(panel: HTMLDialogElement): void {
   statusLabel = document.getElementById('reader-status')!;
   pauseButton = document.getElementById('reader-pause')!;
   pauseLabel = document.getElementById('reader-pause-label')!;
+  speedValue = document.getElementById('reader-speed-value')!;
+  slowerButton = document.getElementById('reader-slower')!;
+  fasterButton = document.getElementById('reader-faster')!;
   notice = document.getElementById('a11y-read-notice')!;
 
   const clickBox = document.getElementById('a11y-read-click') as HTMLInputElement;
@@ -295,18 +322,10 @@ export function initReader(panel: HTMLDialogElement): void {
     else stopReading();
     savePrefs();
   });
-  rates.forEach((input) =>
-    input.addEventListener('change', () => {
-      rate = input.value as Rate;
-      savePrefs();
-      // Takes effect at once: the sentence being read restarts at the new speed
-      if (state === 'reading') {
-        synth?.cancel();
-        speakCurrent();
-      }
-    })
-  );
+  rates.forEach((input) => input.addEventListener('change', () => setRate(input.value as Rate)));
 
+  slowerButton.addEventListener('click', () => stepRate(-1));
+  fasterButton.addEventListener('click', () => stepRate(1));
   pauseButton.addEventListener('click', togglePause);
   document.getElementById('reader-stop')?.addEventListener('click', stopReading);
   document.getElementById('reader-close')?.addEventListener('click', closeReader);

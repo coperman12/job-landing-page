@@ -34,7 +34,9 @@
 
 .a11y-stepper { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.5rem; font-weight: 500; }
 .a11y-stepper-controls { display: flex; align-items: center; gap: 0.5rem; }
-.a11y-stepper .icon-btn { min-width: 44px; height: 44px; font-size: 1.3rem; font-weight: 700; color: var(--primary); }
+:root:is([data-a11y-text="175"], [data-a11y-text="200"]) :is(.a11y-stepper, .a11y-shortcuts > div) { flex-wrap: wrap; } /* Otherwise they leave narrow screens */
+/* In px: the circle has a fixed size, so the - and + inside it must not grow with the text setting */
+.a11y-stepper .icon-btn { min-width: 44px; height: 44px; font-size: 21px; line-height: 1; font-weight: 700; color: var(--primary); }
 .a11y-stepper .icon-btn[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; }
 .a11y-stepper output { min-width: 3.4em; text-align: center; font-weight: 700; }
 
@@ -71,14 +73,29 @@ kbd { padding: 0.05rem 0.4rem; border: 1px solid var(--border); border-bottom-wi
 .reader-bar svg { flex: none; width: 18px; height: 18px; fill: currentColor; }
 .reader-bar .reader-toggle { min-width: 7.5em; background: #5633f0; color: #fff; }
 .reader-bar .icon-btn { flex: none; width: 44px; height: 44px; border-radius: 50%; }
+.reader-bar .icon-btn[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; }
+.reader-speed { display: flex; align-items: center; justify-content: center; gap: 0.35rem; }
+.reader-speed .icon-btn { color: var(--primary); }
+.reader-speed .icon-btn svg { stroke-width: 3; }
+/* Stop and X wrap together, so the X never ends up alone on a row */
+.reader-end { display: flex; align-items: center; gap: 0.5rem; }
+/* A fixed width, so the buttons don't jump when the speed name changes */
+.reader-speed-value { display: grid; min-width: 4em; text-align: center; line-height: 1.2; }
+.reader-speed-value small { font-size: 0.72rem; color: var(--text-muted); }
+.reader-speed-value output { font-weight: 600; }
 .reader-bar[data-state="paused"] .icon-pause, .reader-bar:not([data-state="paused"]) .icon-play { display: none; }
 .reader-status { font-weight: 600; color: var(--primary); }
 /* Above the floating buttons wherever the bar is wide enough to reach them */
 :root:is([data-a11y-text], [data-a11y-spacing]) .reader-bar { inset-block-end: 150px; }
-@media (max-width: 960px) {
+@media (max-width: 1120px) {
   .reader-bar { inset-block-end: 150px; }
 }
+@media (max-width: 400px) {
+  .reader-bar .btn { padding-inline: 0.7rem; }
+  .reader-bar .reader-toggle { min-width: 6em; }
+}
 @media (max-width: 720px) {
+  .reader-speed { flex-basis: 100%; } /* A row of its own on narrow screens */
   .reader-status { display: none; }
   .reader-bar { padding-inline-start: 0.4rem; }
 }
