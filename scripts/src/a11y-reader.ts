@@ -201,6 +201,14 @@ export function stopReading(): void {
   if (hadFocus) document.getElementById('a11y-open')?.focus();
 }
 
+// The X turns reading off altogether: unlike Stop, read-on-click doesn't stay on either
+function closeReader(): void {
+  readOnClick = false;
+  renderControls();
+  savePrefs();
+  stopReading();
+}
+
 export function toggleReading(): void {
   if (state === 'idle') startPage();
   else stopReading();
@@ -301,6 +309,7 @@ export function initReader(panel: HTMLDialogElement): void {
 
   pauseButton.addEventListener('click', togglePause);
   document.getElementById('reader-stop')?.addEventListener('click', stopReading);
+  document.getElementById('reader-close')?.addEventListener('click', closeReader);
 
   initReadOnClick();
 

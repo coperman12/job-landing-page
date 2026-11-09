@@ -62,18 +62,23 @@ kbd { padding: 0.05rem 0.4rem; border: 1px solid var(--border); border-bottom-wi
 
 /* Read aloud: floating controls and the sentence being read */
 .reader-bar {
-  position: fixed; inset-block-end: 20px; left: 50%; transform: translateX(-50%); z-index: 60;
-  display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem; padding-inline-start: 1rem; white-space: nowrap;
-  background: var(--surface); border: 2px solid var(--primary); border-radius: 999px; box-shadow: var(--shadow-lg);
+  position: fixed; inset-block-end: 20px; inset-inline: 8px; z-index: 60; width: fit-content; margin-inline: auto;
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.5rem; padding: 0.4rem; padding-inline-start: 1rem; white-space: nowrap;
+  background: var(--surface); border: 2px solid var(--primary); border-radius: 36px; box-shadow: var(--shadow-lg);
 }
 .reader-bar[hidden] { display: none; }
 .reader-bar .btn { min-height: 48px; padding: 0.3rem 1.1rem; }
 .reader-bar svg { flex: none; width: 18px; height: 18px; fill: currentColor; }
 .reader-bar .reader-toggle { min-width: 7.5em; background: #5633f0; color: #fff; }
+.reader-bar .icon-btn { flex: none; width: 44px; height: 44px; border-radius: 50%; }
 .reader-bar[data-state="paused"] .icon-pause, .reader-bar:not([data-state="paused"]) .icon-play { display: none; }
 .reader-status { font-weight: 600; color: var(--primary); }
-@media (max-width: 720px) {
+/* Above the floating buttons wherever the bar is wide enough to reach them */
+:root:is([data-a11y-text], [data-a11y-spacing]) .reader-bar { inset-block-end: 150px; }
+@media (max-width: 960px) {
   .reader-bar { inset-block-end: 150px; }
+}
+@media (max-width: 720px) {
   .reader-status { display: none; }
   .reader-bar { padding-inline-start: 0.4rem; }
 }

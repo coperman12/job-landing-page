@@ -178,6 +178,13 @@ export function stopReading() {
     if (hadFocus)
         document.getElementById('a11y-open')?.focus();
 }
+// The X turns reading off altogether: unlike Stop, read-on-click doesn't stay on either
+function closeReader() {
+    readOnClick = false;
+    renderControls();
+    savePrefs();
+    stopReading();
+}
 export function toggleReading() {
     if (state === 'idle')
         startPage();
@@ -278,6 +285,7 @@ export function initReader(panel) {
     }));
     pauseButton.addEventListener('click', togglePause);
     document.getElementById('reader-stop')?.addEventListener('click', stopReading);
+    document.getElementById('reader-close')?.addEventListener('click', closeReader);
     initReadOnClick();
     document.addEventListener('langchange', () => {
         stopReading();
