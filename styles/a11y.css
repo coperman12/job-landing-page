@@ -1,0 +1,165 @@
+/* Accessibility menu and the display modes it turns on. Every mode is a data-a11y-* attribute on <html> */
+
+/* Panel */
+.a11y-panel {
+  margin: 0; padding: 0; inset: auto; inset-block-end: 84px; inset-inline-start: 20px;
+  width: min(25rem, calc(100vw - 40px)); max-height: calc(100dvh - 104px); overflow: hidden;
+  color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-lg);
+}
+.a11y-panel::backdrop { background: transparent; } /* No dimming, so color changes are seen as they really are */
+.a11y-inner { display: flex; flex-direction: column; max-height: inherit; }
+.a11y-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.75rem 1.1rem; border-bottom: 1px solid var(--border); }
+.a11y-head h2 { margin: 0; font-size: 1.2rem; }
+.a11y-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 1rem 1.1rem 1.25rem; }
+
+.a11y-group { min-width: 0; margin: 0 0 1.15rem; padding: 0; border: 0; }
+.a11y-group legend { margin-bottom: 0.45rem; padding: 0; font-size: 0.95rem; font-weight: 700; color: var(--primary); }
+
+.a11y-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: 0.5rem; }
+.a11y-tiles-3 { grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr)); }
+.a11y-tile { position: relative; display: block; }
+.a11y-tile input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.a11y-tile span {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; height: 100%; min-height: 48px;
+  padding: 0.5rem 0.75rem; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  font-size: 0.95rem; font-weight: 500; line-height: 1.25; transition: border-color 0.2s, background 0.2s;
+}
+.a11y-tile input:hover + span { border-color: var(--primary); }
+.a11y-tile input:checked + span { border-color: var(--primary); background: var(--primary-soft); font-weight: 600; }
+/* The check mark keeps the state visible without relying on color alone */
+.a11y-tile input:checked + span::after { content: "✓"; font-weight: 800; color: var(--primary); }
+.a11y-tile input:focus-visible + span { outline: 3px solid var(--primary); outline-offset: 2px; }
+
+.a11y-stepper { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.5rem; font-weight: 500; }
+.a11y-stepper-controls { display: flex; align-items: center; gap: 0.5rem; }
+.a11y-stepper .icon-btn { min-width: 44px; height: 44px; font-size: 1.3rem; font-weight: 700; color: var(--primary); }
+.a11y-stepper .icon-btn[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; }
+.a11y-stepper output { min-width: 3.4em; text-align: center; font-weight: 700; }
+
+.a11y-read-btn { margin-bottom: 0.5rem; padding-block: 0.6rem; }
+.a11y-speed { margin-top: 0.6rem; }
+.a11y-speed > span { display: block; margin-bottom: 0.35rem; font-weight: 500; }
+.a11y-notice { margin: 0.5rem 0 0; font-size: 0.9rem; color: var(--danger); }
+.a11y-notice:empty { display: none; }
+.a11y-note { margin: 0.5rem 0; font-size: 0.9rem; color: var(--text-muted); }
+
+.a11y-shortcuts { margin: 0; font-size: 0.92rem; }
+.a11y-shortcuts > div { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.3rem 0; border-top: 1px solid var(--border); }
+.a11y-shortcuts dt { flex: none; }
+.a11y-shortcuts dd { margin: 0; text-align: end; color: var(--text-muted); }
+kbd { padding: 0.05rem 0.4rem; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; background: var(--bg); font-family: var(--font-mono); font-size: 0.85em; }
+
+.a11y-statement { margin-top: 0.9rem; font-size: 0.92rem; }
+.a11y-statement summary { font-weight: 600; cursor: pointer; }
+.a11y-statement p { margin: 0.5rem 0 0; color: var(--text-muted); }
+
+@media (max-width: 520px) {
+  .a11y-panel { inset-inline: 8px; inset-block-end: 8px; width: auto; max-width: none; max-height: calc(100dvh - 16px); }
+}
+
+/* Read aloud: floating controls and the sentence being read */
+.reader-bar {
+  position: fixed; inset-block-end: 20px; left: 50%; transform: translateX(-50%); z-index: 60;
+  display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem; padding-inline-start: 1rem; white-space: nowrap;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 999px; box-shadow: var(--shadow-lg);
+}
+.reader-bar[hidden] { display: none; }
+.reader-bar .btn { min-height: 44px; padding: 0.3rem 1rem; }
+.reader-status { font-weight: 600; color: var(--primary); }
+@media (max-width: 720px) {
+  .reader-bar { inset-block-end: 150px; }
+  .reader-status { display: none; }
+  .reader-bar { padding-inline-start: 0.4rem; }
+}
+.a11y-speaking { outline: 3px solid var(--primary); outline-offset: 4px; border-radius: 6px; background-color: var(--primary-soft); }
+
+/* Colors: high contrast replaces the tokens, every accent included */
+:root[data-a11y-colors="hc-dark"] {
+  --bg: #000; --bg-alt: #000; --surface: #000; --text: #fff; --text-muted: #fff; --border: #fff;
+  --primary: #ffe600; --primary-strong: #fff; --primary-soft: rgba(255, 230, 0, 0.2);
+  --coral: #ffb3a8; --sun: #ffe600; --mint: #66ffc2; --sky: #7fd0ff; --pink: #ffa6de; --success: #7dff9b; --danger: #ff9c9c;
+  --shadow: none; --shadow-lg: none; color-scheme: dark;
+}
+:root[data-a11y-colors="hc-light"] {
+  --bg: #fff; --bg-alt: #fff; --surface: #fff; --text: #000; --text-muted: #000; --border: #000;
+  --primary: #00008b; --primary-strong: #000; --primary-soft: rgba(0, 0, 139, 0.12);
+  --coral: #9c0000; --sun: #6b4700; --mint: #005c3a; --sky: #00468c; --pink: #8a005c; --success: #005c1e; --danger: #b00000;
+  --shadow: none; --shadow-lg: none; color-scheme: light;
+}
+:root:is([data-a11y-colors="hc-dark"], [data-a11y-colors="hc-light"]) .blobs { display: none; }
+:root:is([data-a11y-colors="hc-dark"], [data-a11y-colors="hc-light"]) .site-header { background: var(--bg); border-bottom-color: var(--border); }
+:root:is([data-a11y-colors="hc-dark"], [data-a11y-colors="hc-light"]) :is(.btn-primary, .fab-cta, .fab-a11y, .main-nav a.nav-cta, .skip-link, .brand-mark) {
+  background: var(--primary) !important; color: var(--bg) !important; border-color: var(--primary);
+}
+:root:is([data-a11y-colors="hc-dark"], [data-a11y-colors="hc-light"]) .contact-form::before,
+:root:is([data-a11y-colors="hc-dark"], [data-a11y-colors="hc-light"]) .timeline::before { background: var(--primary); opacity: 1; }
+:root:is([data-a11y-colors="hc-dark"], [data-a11y-colors="hc-light"]) .btn-icon { fill: currentColor; }
+:root:is([data-a11y-colors="hc-dark"], [data-a11y-colors="hc-light"]) .spinner { border-color: currentColor; border-top-color: transparent; }
+
+/* Filters sit on <html> itself: on any other element they would break position: fixed inside it.
+   The open panel lives in the browser's top layer, outside <html>'s painting, so it needs its own */
+:root[data-a11y-colors="mono"], :root[data-a11y-colors="mono"] .a11y-panel { filter: grayscale(1); }
+:root[data-a11y-colors="low-sat"], :root[data-a11y-colors="low-sat"] .a11y-panel { filter: saturate(0.4); }
+
+/* Text */
+:root[data-a11y-text="125"] { font-size: 125%; }
+:root[data-a11y-text="150"] { font-size: 150%; }
+:root[data-a11y-text="175"] { font-size: 175%; }
+:root[data-a11y-text="200"] { font-size: 200%; }
+
+/* WCAG 1.4.12 text spacing values */
+:root[data-a11y-spacing] body, :root[data-a11y-spacing] body * { line-height: 1.8 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important; }
+:root[data-a11y-spacing] p { margin-block-end: 2em; }
+
+:root[data-a11y-font] { --font: Arial, "Helvetica Neue", Helvetica, sans-serif; --font-mono: Arial, "Helvetica Neue", Helvetica, sans-serif; }
+
+/* Larger or wider text no longer fits the desktop header and the timeline's year column: reuse the mobile layout */
+:root:is([data-a11y-text], [data-a11y-spacing]) .menu-toggle { display: grid; }
+:root:is([data-a11y-text], [data-a11y-spacing]) .main-nav {
+  position: fixed; inset: var(--header-h) 0 auto 0; flex-direction: column; align-items: stretch; max-height: calc(100dvh - var(--header-h)); overflow-y: auto;
+  padding: 1rem 16px 1.5rem; background: var(--surface); border-bottom: 1px solid var(--border); box-shadow: var(--shadow-lg);
+  transform: translateY(-120%); visibility: hidden; transition: transform 0.35s var(--ease), visibility 0.35s;
+}
+:root:is([data-a11y-text], [data-a11y-spacing]) .main-nav.open { transform: none; visibility: visible; }
+:root:is([data-a11y-text], [data-a11y-spacing]) .main-nav a { padding: 0.8rem 1rem; border-radius: var(--radius-sm); }
+:root:is([data-a11y-text], [data-a11y-spacing]) .main-nav a.nav-cta { margin: 0.5rem 0 0; text-align: center; }
+:root:is([data-a11y-text], [data-a11y-spacing]) .timeline::before { inset-inline-start: 6px; }
+:root:is([data-a11y-text], [data-a11y-spacing]) .timeline-item { grid-template-columns: 1fr; gap: 0.25rem; padding-inline-start: 2rem; }
+:root:is([data-a11y-text], [data-a11y-spacing]) .timeline-item::before { inset-inline-start: 0; }
+:root:is([data-a11y-text], [data-a11y-spacing]) .timeline-years { padding-left: 0; padding-right: 0; }
+:root:is([data-a11y-text], [data-a11y-spacing]) body { overflow-wrap: anywhere; }
+:root:is([data-a11y-text], [data-a11y-spacing]) .stats { grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); }
+@media (max-width: 720px) {
+  :root:is([data-a11y-text], [data-a11y-spacing]) .brand-name { display: none; }
+}
+/* The form button can fill the bottom row on a phone, so the accessibility button moves up a row */
+@media (max-width: 480px) {
+  :root:is([data-a11y-text], [data-a11y-spacing]) .fab-a11y { inset-block-end: 84px; }
+  :root:is([data-a11y-text], [data-a11y-spacing]) .fab-cta { padding-inline: 14px; font-size: min(1rem, 17px); }
+  :root:is([data-a11y-text], [data-a11y-spacing]) .fab-cta svg { display: none; }
+}
+
+/* Display */
+:root[data-a11y-links] a:not(.btn, .fab, .skip-link) { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+:root[data-a11y-links] a:not(:focus-visible) { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+:root[data-a11y-headings] main :is(h1, h2, h3) { padding: 0.15em 0.5em; border-inline-start: 0.3rem solid var(--primary); border-radius: 4px; background: var(--primary-soft); }
+
+.a11y-guide { display: none; position: fixed; top: -1.4rem; inset-inline: 0; z-index: 70; height: 2.8rem; pointer-events: none; background: var(--primary-soft); border-block: 2px solid var(--primary); }
+:root[data-a11y-guide] .a11y-guide.is-active { display: block; }
+
+:root[data-a11y-cursor], :root[data-a11y-cursor] * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24'%3E%3Cpath d='M5 2v17.5l4.6-4.3 3.2 7 3-1.4-3.2-6.9H19z' fill='%23000' stroke='%23fff' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E") 10 4, auto !important;
+}
+:root[data-a11y-cursor] :is(a, button, summary, .a11y-tile input) {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24'%3E%3Cpath d='M5 2v17.5l4.6-4.3 3.2 7 3-1.4-3.2-6.9H19z' fill='%235633f0' stroke='%23fff' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E") 10 4, pointer !important;
+}
+
+:root[data-a11y-motion] { scroll-behavior: auto; }
+:root[data-a11y-motion] *, :root[data-a11y-motion] *::before, :root[data-a11y-motion] *::after { animation: none !important; transition: none !important; }
+:root[data-a11y-motion].js .reveal { opacity: 1; transform: none; }
+
+/* Keyboard navigation: two-layer ring, visible on any background */
+:root[data-a11y-keys] :focus-visible, :root[data-a11y-keys] .a11y-tile input:focus-visible + span {
+  outline: 4px solid var(--primary); outline-offset: 3px; box-shadow: 0 0 0 10px color-mix(in srgb, var(--primary) 30%, transparent);
+}

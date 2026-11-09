@@ -1,6 +1,8 @@
 // Count numbers up from 0 when the stats row becomes visible
 const DURATION_MS = 1400;
 function prefersReducedMotion() {
+    if (document.documentElement.hasAttribute('data-a11y-motion'))
+        return true;
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 function animate(el) {

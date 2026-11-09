@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="/styles/layout.css">
   <link rel="stylesheet" href="/styles/components.css">
   <link rel="stylesheet" href="/styles/animations.css">
+  <link rel="stylesheet" href="/styles/a11y.css">
 
   <script>
     // Before paint: enable JS-only styles, apply saved theme, and set language direction to avoid a flash
@@ -36,6 +37,9 @@
           root.classList.add('lang-loading');
           setTimeout(function () { root.classList.remove('lang-loading'); }, 1500);
         }
+        // Accessibility choices are data-a11y-* attributes on <html> (see a11y.ts)
+        var a = JSON.parse(localStorage.getItem('a11y') || '{}');
+        Object.keys(a).forEach(function (k) { root.setAttribute('data-a11y-' + k, a[k]); });
       } catch (e) {}
     })();
   </script>
@@ -43,6 +47,10 @@
 </head>
 <body>
   <a class="skip-link" href="#main" data-i18n="skip">Skip to content</a>
+
+  <button class="fab fab-a11y" id="a11y-open" type="button" aria-haspopup="dialog" aria-controls="a11y-panel" data-i18n-attr="aria-label:a11y.open;title:a11y.open" aria-label="Accessibility menu (Alt+A)" title="Accessibility menu (Alt+A)">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4.5" r="2"/><path d="M4.5 9c2.4.7 4.9 1 7.5 1s5.1-.3 7.5-1M12 10v4.5M12 14.5 8.5 21M12 14.5l3.5 6.5"/></svg>
+  </button>
 
   <header class="site-header" id="top">
     <div class="container header-inner">
@@ -359,5 +367,119 @@
       <p class="muted">Built with ASP.NET Core, TypeScript & Supabase</p>
     </div>
   </footer>
+
+  <!-- Floating actions: back to top appears after scrolling, the form shortcut hides while the form is on screen -->
+  <div class="fab-stack">
+    <a class="fab fab-top" id="to-top" href="#top" data-i18n-attr="aria-label:aria.home" aria-label="Back to top">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+    </a>
+    <a class="fab fab-cta" id="form-cta" href="#contact-form">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4"/></svg>
+      <span data-i18n="float.cta">Leave your details</span>
+    </a>
+  </div>
+
+  <!-- Shown while the page is being read aloud -->
+  <div class="reader-bar" id="reader-bar" role="group" data-i18n-attr="aria-label:a11y.read" aria-label="Read aloud" hidden>
+    <span class="reader-status" id="reader-status"></span>
+    <button class="btn btn-ghost" id="reader-pause" type="button"></button>
+    <button class="btn btn-ghost" id="reader-stop" type="button" data-i18n="a11y.read.stop">Stop</button>
+  </div>
+
+  <div class="a11y-guide" id="a11y-guide" aria-hidden="true"></div>
+
+  <dialog class="a11y-panel" id="a11y-panel" aria-labelledby="a11y-title">
+    <div class="a11y-inner">
+      <header class="a11y-head">
+        <h2 id="a11y-title" data-i18n="a11y.title">Accessibility menu</h2>
+        <button class="icon-btn" id="a11y-close" type="button" data-i18n-attr="aria-label:a11y.close" aria-label="Close accessibility menu">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </header>
+
+      <div class="a11y-body">
+        <fieldset class="a11y-group">
+          <legend data-i18n="a11y.colors">Colors</legend>
+          <div class="a11y-tiles">
+            <label class="a11y-tile"><input type="radio" name="a11y-colors" value="" checked><span data-i18n="a11y.colors.default">Default</span></label>
+            <label class="a11y-tile"><input type="radio" name="a11y-colors" value="hc-dark"><span data-i18n="a11y.colors.hcDark">High contrast dark</span></label>
+            <label class="a11y-tile"><input type="radio" name="a11y-colors" value="hc-light"><span data-i18n="a11y.colors.hcLight">High contrast light</span></label>
+            <label class="a11y-tile"><input type="radio" name="a11y-colors" value="mono"><span data-i18n="a11y.colors.mono">Monochrome</span></label>
+            <label class="a11y-tile"><input type="radio" name="a11y-colors" value="low-sat"><span data-i18n="a11y.colors.lowSat">Low saturation</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="a11y-group">
+          <legend data-i18n="a11y.text">Text</legend>
+          <div class="a11y-stepper" role="group" aria-labelledby="a11y-size-label">
+            <span id="a11y-size-label" data-i18n="a11y.text.size">Text size</span>
+            <div class="a11y-stepper-controls">
+              <button class="icon-btn" id="a11y-text-down" type="button" data-i18n-attr="aria-label:a11y.text.smaller" aria-label="Decrease text size">−</button>
+              <output id="a11y-text-value" dir="ltr">100%</output>
+              <button class="icon-btn" id="a11y-text-up" type="button" data-i18n-attr="aria-label:a11y.text.larger" aria-label="Increase text size">+</button>
+            </div>
+          </div>
+          <div class="a11y-tiles">
+            <label class="a11y-tile"><input type="checkbox" data-a11y-toggle="spacing"><span data-i18n="a11y.text.spacing">Wider spacing</span></label>
+            <label class="a11y-tile"><input type="checkbox" data-a11y-toggle="font"><span data-i18n="a11y.text.font">Readable font</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="a11y-group">
+          <legend data-i18n="a11y.display">Display</legend>
+          <div class="a11y-tiles">
+            <label class="a11y-tile"><input type="checkbox" data-a11y-toggle="links"><span data-i18n="a11y.links">Highlight links</span></label>
+            <label class="a11y-tile"><input type="checkbox" data-a11y-toggle="headings"><span data-i18n="a11y.headings">Highlight headings</span></label>
+            <label class="a11y-tile"><input type="checkbox" data-a11y-toggle="guide"><span data-i18n="a11y.guide">Reading guide</span></label>
+            <label class="a11y-tile"><input type="checkbox" data-a11y-toggle="cursor"><span data-i18n="a11y.cursor">Large cursor</span></label>
+            <label class="a11y-tile"><input type="checkbox" data-a11y-toggle="motion"><span data-i18n="a11y.motion">Stop animations</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="a11y-group">
+          <legend data-i18n="a11y.read">Read aloud</legend>
+          <button class="btn btn-ghost btn-block a11y-read-btn" id="a11y-read-page" type="button" data-i18n="a11y.read.page">Read the page</button>
+          <div class="a11y-tiles">
+            <label class="a11y-tile a11y-tile-wide"><input type="checkbox" id="a11y-read-click"><span data-i18n="a11y.read.click">Read on click or Tab</span></label>
+          </div>
+          <div class="a11y-speed" role="radiogroup" aria-labelledby="a11y-speed-label">
+            <span id="a11y-speed-label" data-i18n="a11y.read.speed">Speed</span>
+            <div class="a11y-tiles a11y-tiles-3">
+              <label class="a11y-tile"><input type="radio" name="a11y-rate" value="slow"><span data-i18n="a11y.read.slow">Slow</span></label>
+              <label class="a11y-tile"><input type="radio" name="a11y-rate" value="normal" checked><span data-i18n="a11y.read.normal">Normal</span></label>
+              <label class="a11y-tile"><input type="radio" name="a11y-rate" value="fast"><span data-i18n="a11y.read.fast">Fast</span></label>
+            </div>
+          </div>
+          <p class="a11y-notice" id="a11y-read-notice" role="status"></p>
+        </fieldset>
+
+        <fieldset class="a11y-group">
+          <legend data-i18n="a11y.keys">Keyboard navigation</legend>
+          <div class="a11y-tiles">
+            <label class="a11y-tile a11y-tile-wide"><input type="checkbox" data-a11y-toggle="keys"><span data-i18n="a11y.keys.enable">Shortcuts and strong focus ring</span></label>
+          </div>
+          <p class="a11y-note" data-i18n="a11y.keys.note">Number and letter shortcuts work only while this option is on.</p>
+          <dl class="a11y-shortcuts">
+            <div><dt><kbd>Tab</kbd></dt><dd data-i18n="a11y.key.tab">Move between links and fields</dd></div>
+            <div><dt><kbd>Alt</kbd> + <kbd>A</kbd></dt><dd data-i18n="a11y.key.menu">Open or close this menu</dd></div>
+            <div><dt><kbd>Esc</kbd></dt><dd data-i18n="a11y.key.esc">Close the menu or stop reading</dd></div>
+            <div><dt><kbd>1</kbd> – <kbd>5</kbd></dt><dd data-i18n="a11y.key.sections">Jump to a section</dd></div>
+            <div><dt><kbd>N</kbd> / <kbd>P</kbd></dt><dd data-i18n="a11y.key.nextPrev">Next or previous section</dd></div>
+            <div><dt><kbd>T</kbd></dt><dd data-i18n="a11y.key.top">Top of the page</dd></div>
+            <div><dt><kbd>F</kbd></dt><dd data-i18n="a11y.key.form">Contact form</dd></div>
+            <div><dt><kbd>R</kbd></dt><dd data-i18n="a11y.key.read">Read the page or stop</dd></div>
+          </dl>
+        </fieldset>
+
+        <button class="btn btn-ghost btn-block" id="a11y-reset" type="button" data-i18n="a11y.reset">Reset all settings</button>
+
+        <details class="a11y-statement">
+          <summary data-i18n="a11y.statement">Accessibility statement</summary>
+          <p data-i18n="a11y.statement.text">This site is built with the goal of meeting WCAG 2.1 level AA, the basis of Israeli Standard 5568. It uses semantic HTML for screen readers, works with a keyboard, and offers this menu for adjusting colors, text, motion and read aloud. It has not gone through a formal external accessibility audit, so some issues may remain.</p>
+          <p data-i18n="a11y.statement.contact">If you run into an accessibility problem, please tell me through the contact form or on LinkedIn, and I will fix it as soon as I can.</p>
+        </details>
+      </div>
+    </div>
+  </dialog>
 </body>
 </html>

@@ -2,6 +2,7 @@
 const DURATION_MS = 1400;
 
 function prefersReducedMotion(): boolean {
+  if (document.documentElement.hasAttribute('data-a11y-motion')) return true;
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 

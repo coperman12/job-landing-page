@@ -6,6 +6,8 @@ import { initReveal } from './reveal.js';
 import { initCounters } from './counters.js';
 import { initTyped } from './typed.js';
 import { initContactForm } from './contact-form.js';
+import { initFloatActions } from './float-actions.js';
+import { initA11y } from './a11y.js';
 
 function init(): void {
   initI18n();
@@ -15,6 +17,8 @@ function init(): void {
   initCounters();
   initTyped();
   initContactForm();
+  initFloatActions();
+  initA11y();
 
   const year = document.getElementById('year');
   if (year) year.textContent = String(new Date().getFullYear());
