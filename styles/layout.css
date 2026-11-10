@@ -41,6 +41,9 @@
   .main-nav a { padding: 0.8rem 1rem; border-radius: var(--radius-sm); }
   .main-nav a.nav-cta { margin: 0.5rem 0 0; text-align: center; }
 }
+/* Six links fit next to the brand on narrow desktops only with tighter padding, and the name stays on one line */
+@media (min-width: 861px) and (max-width: 1040px) { .main-nav a { padding-inline: 0.55rem; } .brand-name { white-space: nowrap; } }
+@media (min-width: 861px) and (max-width: 900px) { .main-nav a { padding-inline: 0.35rem; } }
 
 /* Hero */
 .hero { position: relative; overflow: hidden; padding: clamp(2.5rem, 7vw, 5rem) 0 3.5rem; isolation: isolate; }

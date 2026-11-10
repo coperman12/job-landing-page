@@ -160,6 +160,21 @@
   background: color-mix(in srgb, var(--success) 14%, transparent); color: var(--success);
 }
 
+/* Side projects - round watch screenshot next to the text */
+.project {
+  --c: var(--sky);
+  display: grid; grid-template-columns: 180px 1fr; gap: clamp(1.25rem, 4vw, 2.5rem); align-items: center;
+  padding: clamp(1.25rem, 4vw, 2rem); border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border);
+}
+.project-shot { width: 180px; height: 180px; border-radius: 50%; background: #000; box-shadow: var(--shadow-lg); }
+.project-body h3 { margin-bottom: 0.15rem; }
+.project-body > p:not(.muted) { color: var(--text-muted); }
+.project .chips { margin-bottom: 1.25rem; }
+@media (max-width: 640px) {
+  .project { grid-template-columns: 1fr; }
+  .project-shot { width: 150px; height: 150px; justify-self: center; }
+}
+
 /* Contact */
 .contact-text p { color: var(--text-muted); }
 .link-arrow { font-weight: 600; display: inline-block; }

@@ -19,6 +19,7 @@ const en = {
   'nav.strengths': 'Strengths',
   'nav.experience': 'Experience',
   'nav.stack': 'Tech',
+  'nav.projects': 'Projects',
   'nav.learning': 'Learning',
   'nav.contact': 'Contact',
 
@@ -69,6 +70,13 @@ const en = {
   'learn.ruppin.title': 'Software Engineering Practitioner',
   'learn.ruppin.meta': 'Ruppin Academic Center · 2009 – 2011',
   'learn.ruppin': 'The foundation: programming, data structures and databases.',
+
+  'proj.eyebrow': 'Built in my free time',
+  'proj.title': 'Side projects',
+  'proj.garmin.title': 'Digital Face for Garmin watches',
+  'proj.garmin.text': 'A configurable watch face for 41 round AMOLED Garmin models: 4 layouts, 15 metrics to choose from, settings on the watch and in the phone app, and a live background drawn in code that follows the time of day, the weather and the heart-rate zone.',
+  'proj.garmin.link': 'Screenshots and code excerpts on GitHub',
+  'proj.garmin.alt': 'Digital Face on a Garmin watch, with the live evening background',
 
   'contact.eyebrow': 'Get in touch',
   'contact.title': 'Looking for a Team Lead or a Senior .NET Developer?',
@@ -183,6 +191,7 @@ const he: Record<Key, string> = {
   'nav.strengths': 'חוזקות',
   'nav.experience': 'ניסיון',
   'nav.stack': 'טכנולוגיות',
+  'nav.projects': 'פרויקטים',
   'nav.learning': 'לימודים',
   'nav.contact': 'צור קשר',
 
@@ -233,6 +242,13 @@ const he: Record<Key, string> = {
   'learn.ruppin.title': 'הנדסאי תוכנה',
   'learn.ruppin.meta': 'המרכז האקדמי רופין · 2009 – 2011',
   'learn.ruppin': 'הבסיס: תכנות, מבני נתונים ומסדי נתונים.',
+
+  'proj.eyebrow': 'נבנה בזמן הפנוי',
+  'proj.title': 'פרויקטים אישיים',
+  'proj.garmin.title': 'Digital Face לשעוני Garmin',
+  'proj.garmin.text': 'פרצוף שעון (Watch Face) שאפשר להתאים אישית, ל-41 דגמי Garmin עגולים עם מסך AMOLED: 4 פריסות, 15 מדדים לבחירה, הגדרות בשעון ובאפליקציה בטלפון, ורקע חי שמצויר בקוד ומשתנה לפי השעה ביום, מזג האוויר ואזור הדופק.',
+  'proj.garmin.link': 'צילומים וקטעי קוד ב-GitHub',
+  'proj.garmin.alt': 'Digital Face על שעון Garmin, עם הרקע החי של הערב',
 
   'contact.eyebrow': 'צור קשר',
   'contact.title': 'מחפשים ראש צוות או מפתח .NET בכיר?',
