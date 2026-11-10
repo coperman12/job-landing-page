@@ -13,7 +13,6 @@ const MALE_VOICES: Record<Lang, string[]> = {
   he: ['Avri', 'Asaf'],
   en: ['Guy', 'Andrew', 'Brian', 'Christopher', 'Eric', 'Aaron', 'Daniel', 'Alex', 'David', 'Mark', 'Ryan', 'George', 'Google UK English Male', 'Reed', 'Eddy', 'Rocko', 'Fred'],
 };
-const DEEP_PITCH = 0.75; // For a device with no male voice in this language, like Hebrew on Apple (only Carmit)
 
 const BLOCKS = 'h1, h2, h3, p, label, .stat, .chips, .timeline-years, .edu-tag';
 const NOT_READ = '.hp, .field-error, .form-status';
@@ -154,7 +153,6 @@ function speakCurrent(): void {
   const voice = findVoice(lang);
   if (voice) utterance.voice = voice;
   utterance.rate = RATES[rate];
-  if (!voice || !MALE_VOICES[lang].some((name) => isNamed(voice, name))) utterance.pitch = DEEP_PITCH;
 
   utterance.onend = () => {
     if (id !== run) return;
