@@ -1,0 +1,48 @@
+/* Portfolio page - case studies. Uses the same tokens as the main page */
+.pf-hero { position: relative; overflow: hidden; padding-block: clamp(3rem, 8vw, 5.5rem) clamp(2rem, 5vw, 3rem); }
+.pf-hero .container { position: relative; z-index: 1; }
+.pf-hero h1 { font-size: clamp(2.4rem, 6vw, 3.8rem); margin-bottom: 0.75rem; }
+.pf-lead { max-width: 46rem; font-size: 1.15rem; color: var(--text-muted); }
+.pf-jump { display: flex; flex-wrap: wrap; gap: 0.6rem; list-style: none; padding: 0; margin: 1.5rem 0 0; }
+.pf-jump a {
+  display: inline-block; padding: 0.45rem 1rem; border-radius: 999px; font-weight: 600;
+  background: var(--surface); border: 1px solid var(--border); color: var(--text); transition: transform 0.25s var(--bounce);
+}
+.pf-jump a:hover { transform: translateY(-2px); }
+
+.case-section { scroll-margin-top: var(--header-h); }
+.case-violet { --c: var(--primary); --c-text: var(--primary-strong); }
+.case-coral { --c: var(--coral); --c-text: var(--coral-text); }
+.case-sky { --c: var(--sky); --c-text: var(--sky-text); }
+
+.case {
+  display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 3.5rem); align-items: center;
+}
+.case-flip .case-body { order: 2; }
+.case-num { display: inline-block; margin: 0 0 0.4rem; font-size: 0.95rem; font-weight: 700; color: var(--c-text); }
+.case h2 { margin-bottom: 0.15rem; }
+.case-sum { font-size: 1.1rem; margin-top: 0.9rem; }
+.case-points { margin: 1rem 0 1.25rem; padding-inline-start: 1.2rem; color: var(--text-muted); }
+.case-points li { margin-bottom: 0.55rem; padding-inline-start: 0.2rem; }
+.case-points li::marker { color: var(--c); }
+.case .chips { margin-bottom: 1.25rem; }
+.case-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.75rem; margin: 0 0 0.75rem; }
+.case-note { font-size: 0.92rem; margin: 0.5rem 0 0; }
+
+.case-media { margin: 0; }
+.case-shot {
+  width: 100%; height: auto; border-radius: var(--radius); border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg); background: var(--surface);
+}
+.case-media figcaption { margin-top: 0.75rem; font-size: 0.9rem; text-align: center; }
+.watch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.75rem, 3vw, 1.5rem); max-width: 440px; margin-inline: auto; }
+.watch-grid img { width: 100%; height: auto; aspect-ratio: 1; border-radius: 50%; background: #000; box-shadow: var(--shadow-lg); }
+
+.pf-cta { text-align: center; }
+.pf-cta .hero-cta { justify-content: center; }
+
+@media (max-width: 860px) {
+  .case { grid-template-columns: minmax(0, 1fr); }
+  .case-flip .case-body { order: 0; }
+  .case-media { order: 2; }
+}

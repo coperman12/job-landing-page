@@ -30,6 +30,7 @@ var app = builder.Build();
 // The site files sit next to the server folder: index.html, styles/, scripts/dist/, images/
 var siteRoot = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, app.Configuration["Site:Root"] ?? ".."));
 var indexPath = Path.Combine(siteRoot, "index.html");
+var portfolioPath = Path.Combine(siteRoot, "portfolio.html");
 
 app.UseSecurityHeaders(indexPath);
 
@@ -49,6 +50,7 @@ app.UseRateLimiter();
 
 // GET and HEAD - link checkers and crawlers often send HEAD first
 app.MapMethods("/", new[] { "GET", "HEAD" }, () => Results.File(indexPath, "text/html; charset=utf-8"));
+app.MapMethods("/portfolio", new[] { "GET", "HEAD" }, () => Results.File(portfolioPath, "text/html; charset=utf-8"));
 app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 app.MapContactEndpoints();
 

@@ -10,7 +10,7 @@ RUN dotnet publish server/LandingPage.Server.csproj -c Release -o /out --no-rest
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 COPY --from=build /out .
-COPY index.html /site/
+COPY index.html portfolio.html /site/
 COPY styles/ /site/styles/
 COPY images/ /site/images/
 COPY scripts/dist/ /site/scripts/dist/
